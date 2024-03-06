@@ -1,13 +1,13 @@
 const express = require("express");
-const loginRoute = require("./Routes/loginRoute");
+const loginRoute = require("./Route/loginRoute");
 const childRoute = require("./Route/childRoute");
 const classRoute = require("./Route/classRoute");
 const teacherRoute = require("./Route/teacherRoute");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("morgan");
-const authMW = require("./Core/auth/authenticationMiddleWare");
-const multer = require("multer");// parse to  images
+const authMW = require("./core/auth/authenticationMW");
+const multer = require("multer"); // parse to  images
 // create server
 const server = express();
 
@@ -35,11 +35,9 @@ server.use(express.urlencoded({ extended: false }));
 //routes
 server.use(loginRoute);
 server.use(teacherRoute);
-server.use(childsRoute);
-server.use(classesRoute);
+server.use(childRoute);
+server.use(classRoute);
 server.use(authMW);
-
-
 
 //not found
 server.use((request, response) => {
@@ -52,38 +50,3 @@ server.use((error, request, response, next) => {
   response.statusCode(500).json({ message: error + " " });
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    console.log(path.join(__dirname, "images"));
-    cb(null, path.join(__dirname, "images"));
-  },
-  filename: (req, file, cb) => {
-    console.log(
-      new Date().toLocaleDateString().replace("///g", "-") +
-        "-" +
-        file.originalname
-    );
-    cb(
-      null,
-      new Date().toLocaleDateString().replace(/\//g, "-") +
-        "-" +
-        file.originalname
-    );
-  },
-});
-const filterFile = (req, file, cb) => {
-  if (
-    file.mimetype == "image/jpeg" ||
-    file.mimetype == "image/jpg" ||
-    file.mimetype == "image/png"
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
-
-
-server.use("/images", express.static(path.join(__dirname, "images")));
-server.use(multer({ storage, filterFile }).single("Image"));

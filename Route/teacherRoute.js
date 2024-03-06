@@ -1,5 +1,5 @@
 const express = require("express");
-const controller = require("./../Controller/teachersController");
+const controller = require("./../Controller/teacherController");
 const validation = require("../core/validation/validationMW");
 const teachervalidation = require("./../Validation/teacherValidation");
 const {
